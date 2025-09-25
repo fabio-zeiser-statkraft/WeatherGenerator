@@ -96,12 +96,10 @@ class DataReaderWind(DataReaderTimestep):
         # TODO: Currently the lat / lon is not provided. We hack a value
         _logger.warning(f"Assigning arbitrary lat/lon for wind power. WIP")
 
-
-
-        # ds["latitude"] = np.arange(len(ds.variable))
-        # ds["longitude"] = np.arange(len(ds.variable))
-        ds = ds.assign_coords(latitude=("variable", np.arange(len(ds.variable))))
-        ds = ds.assign_coords(longitude=("variable", np.arange(len(ds.variable))))
+        # ds["latitude"] = np.arange(len(ds["variable"]))
+        # ds["longitude"] = np.arange(len(ds["variable"]))
+        ds = ds.assign_coords(latitude=("variable", np.arange(len(ds["variable"]))))
+        ds = ds.assign_coords(longitude=("variable", np.arange(len(ds["variable"]))))
 
         self.latitudes = _clip_lat(np.array(ds.latitude, dtype=np.float32))
         self.longitudes = _clip_lon(np.array(ds.longitude, dtype=np.float32))
@@ -117,8 +115,8 @@ class DataReaderWind(DataReaderTimestep):
         self.source_channels = [] #[self.channels_file[i] for i in self.source_idx]
 
         # select/filter requested target channels
-        self.target_idx = np.arange(len(self.ds.variable))#self.select_channels(ds, "target")
-        self.target_channels = self.ds.variable.values
+        self.target_idx = np.arange(len(self.ds["variable"]))#self.select_channels(ds, "target")
+        self.target_channels = self.ds["variable"].values.tolist()
 
         ds_name = stream_info["name"]
         _logger.info(f"{ds_name}: source channels: {self.source_channels}")
@@ -214,12 +212,16 @@ class DataReaderWind(DataReaderTimestep):
         # data = data.transpose([1, 2, 0]).reshape((data.shape[1] * data.shape[2], data.shape[0]))
         # mask = data == self.fillvalue
         # data[mask] = np.nan
+        
+        # # TODO: REMOVE THIS NAN HANDLING
+        # _logger.warning(f"Impute nans with 0. WIP")
+        # data = np.nan_to_num(data, copy=False, nan=0.0)
 
         # construct lat/lon coords
         latlon = np.concatenate(
             [
-                np.expand_dims(self.latitudes, 0),
-                np.expand_dims(self.longitudes, 0),
+            np.expand_dims(self.latitudes, 0),
+            np.expand_dims(self.longitudes, 0),
             ],
             axis=0,
         ).transpose()

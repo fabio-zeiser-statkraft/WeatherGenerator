@@ -16,7 +16,7 @@ SKWIND :
   masking_rate : 0.6
   masking_rate_none : 0.2
   token_size : 512 ## -> TODO
-  sampling_rate_target : 0.1
+  sampling_rate_target : 1.0
   embed : 
     net : transformer
     num_tokens : 1
