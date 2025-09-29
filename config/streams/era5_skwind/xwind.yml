@@ -15,7 +15,7 @@ SKWIND :
   loss_weight : 1.
   masking_rate : 0.6
   masking_rate_none : 0.2
-  token_size : 512 ## -> TODO
+  token_size : 512 # used for sources, only
   sampling_rate_target : 1.0
   embed : 
     net : transformer
